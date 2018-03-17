@@ -27,4 +27,6 @@ def normal_equation_prediction(X, y):
     w = np.dot(w, X_T)
     w = np.dot(w, y)
     
-    return np.dot(newX, w)
+    prediction = np.dot(newX, w)
+
+    return prediction
