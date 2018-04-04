@@ -68,7 +68,9 @@ def compute_wgrad(X, y, w):
         J_mais = compute_cost(X, y, w_mais)
         J_menos = compute_cost(X, y, w_menos)
 
-        grad = np.append(grad, (J_mais - J_menos)/(2*eps)) 
+        grad = np.append(grad, (J_mais - J_menos)/(2*eps))
+        
+    grad = np.reshape(grad, (d, 1))
       
     return grad
 
@@ -94,11 +96,12 @@ def batch_gradient_descent(X, y, w, learning_rate, num_iters):
     
     weights_history = [w.flatten()]
     cost_history = [compute_cost(X, y, w)]
-    
-    for i in range(num_iters):
-        grad = np.reshape(compute_grad(X, y, w), (2, 1))
-        w = w - learning_rate*grad
+    d = w.shape[0]
+
+    for i in range(d):
+        grad = compute_wgrad(X, y, w)
+        w -= learning_rate*grad
         weights_history.append(w)
         cost_history.append(compute_cost(X, y, w))
-        
+
     return w, weights_history, cost_history 
