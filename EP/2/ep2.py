@@ -71,3 +71,34 @@ def compute_wgrad(X, y, w):
         grad = np.append(grad, (J_mais - J_menos)/(2*eps)) 
       
     return grad
+
+# Exercício 4
+
+def batch_gradient_descent(X, y, w, learning_rate, num_iters):
+    """
+     Performs batch gradient descent optimization.
+
+    :param X: design matrix
+    :type X: np.ndarray(shape=(N, d))
+    :param y: regression targets
+    :type y: np.ndarray(shape=(N, 1))
+    :param w: weights
+    :type w: np.array(shape=(d, 1))
+    :param learning_rate: learning rate
+    :type learning_rate: float
+    :param num_iters: number of iterations
+    :type num_iters: int
+    :return: weights, weights history, cost history
+    :rtype: np.array(shape=(d, 1)), list, list
+    """
+    
+    weights_history = [w.flatten()]
+    cost_history = [compute_cost(X, y, w)]
+    
+    for i in range(num_iters):
+        grad = np.reshape(compute_grad(X, y, w), (2, 1))
+        w = w - learning_rate*grad
+        weights_history.append(w)
+        cost_history.append(compute_cost(X, y, w))
+        
+    return w, weights_history, cost_history 
