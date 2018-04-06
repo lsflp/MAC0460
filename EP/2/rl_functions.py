@@ -98,13 +98,13 @@ def batch_gradient_descent(X, y, w, learning_rate, num_iters):
     :rtype: np.array(shape=(d,)), list, list
     """
 
-    weights_history = [w.flatten()]
+    weights_history = [w]
     cost_history = [compute_cost(X, y, w)]
 
     for i in range(num_iters):
         grad = compute_wgrad(X, y, w)
         w -= np.dot(learning_rate, w)
-        weights_history.append(w.flatten())
+        weights_history.append(w)
         cost_history.append(compute_cost(X, y, w))
 
     return w, weights_history, cost_history
@@ -130,7 +130,7 @@ def stochastic_gradient_descent(X, y, w, learning_rate, num_iters, batch_size):
     :rtype: np.array(shape=(d, 1)), list, list
     """
     
-    weights_history = [w.flatten()]
+    weights_history = [w]
     cost_history = [compute_cost(X, y, w)]
     N = X.shape[0]
     
@@ -139,8 +139,8 @@ def stochastic_gradient_descent(X, y, w, learning_rate, num_iters, batch_size):
         sample_X = X[index,:]
         sample_y = y[index,:]
         grad = compute_wgrad(sample_X, sample_y, w)
-        w -= learning_rate*grad
-        weights_history.append(w.flatten())
+        w -= np.dot(learning_rate, grad)
+        weights_history.append(w)
         cost_history.append(compute_cost(X, y, w))
 
     return w, weights_history, cost_history
