@@ -1,6 +1,21 @@
 import numpy as np
+from util import randomize_in_place
 
-# Exercício 1
+
+def linear_regression_prediction(X, w):
+    """
+    Calculates the linear regression prediction.
+
+    :param X: design matrix
+    :type X: np.ndarray(shape=(N, d))
+    :param w: weights
+    :type w: np.array(shape=(d, 1))
+    :return: prediction
+    :rtype: np.array(shape=(N, 1))
+    """
+
+    return X.dot(w)
+
 
 def standardize(X):
     """
@@ -16,7 +31,6 @@ def standardize(X):
 
     return X_out
 
-# Exercício 2
 
 def compute_cost(X, y, w):
     """
@@ -27,7 +41,7 @@ def compute_cost(X, y, w):
     :param y: regression targets
     :type y: np.ndarray(shape=(N, 1))
     :param w: weights
-    :type w: np.array(shape=(d, 1))
+    :type w: np.array(shape=(d,))
     :return: cost
     :rtype: float
     """
@@ -36,11 +50,10 @@ def compute_cost(X, y, w):
     matrix_T = np.transpose(matrix)
     
     J = np.dot(matrix_T, matrix)
-    J = J/X.shape[0]
+    J = np.dot(1/X.shape[0], J)
 
     return J
 
-# Exercício 3
 
 def compute_wgrad(X, y, w):
     """
@@ -51,15 +64,15 @@ def compute_wgrad(X, y, w):
     :param y: regression targets
     :type y: np.ndarray(shape=(N, 1))
     :param w: weights
-    :type w: np.array(shape=(d, 1))
+    :type w: np.array(shape=(d,))
     :return: gradient
-    :rtype: np.array(shape=(d, 1))
+    :rtype: np.array(shape=(d,))
     """
-    
+
     eps = 1e-4
     d = w.shape[0]
     grad = np.array([])
-    
+
     for i in range(0, d):
         w_mais = np.array(w, copy=True)
         w_menos = np.array(w, copy=True)
@@ -73,10 +86,9 @@ def compute_wgrad(X, y, w):
         grad = np.append(grad, (J_mais - J_menos)/(2*eps))
         
     grad = np.reshape(grad, (d, 1))
-      
+
     return grad
 
-# Exercício 4
 
 def batch_gradient_descent(X, y, w, learning_rate, num_iters):
     """
@@ -87,27 +99,26 @@ def batch_gradient_descent(X, y, w, learning_rate, num_iters):
     :param y: regression targets
     :type y: np.ndarray(shape=(N, 1))
     :param w: weights
-    :type w: np.array(shape=(d, 1))
+    :type w: np.array(shape=(d,))
     :param learning_rate: learning rate
     :type learning_rate: float
     :param num_iters: number of iterations
     :type num_iters: int
     :return: weights, weights history, cost history
-    :rtype: np.array(shape=(d, 1)), list, list
+    :rtype: np.array(shape=(d,)), list, list
     """
-    
+
     weights_history = [w.flatten()]
     cost_history = [compute_cost(X, y, w)]
 
     for i in range(num_iters):
         grad = compute_wgrad(X, y, w)
-        w -= learning_rate*grad
+        w -= np.dot(learning_rate, w)
         weights_history.append(w.flatten())
         cost_history.append(compute_cost(X, y, w))
 
-    return w, weights_history, cost_history 
+    return w, weights_history, cost_history
 
-#Exercício 5
 
 def stochastic_gradient_descent(X, y, w, learning_rate, num_iters, batch_size):
     """
