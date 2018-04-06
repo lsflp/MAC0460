@@ -69,13 +69,23 @@ def compute_wgrad(X, y, w):
     :rtype: np.array(shape=(d,))
     """
 
-    N = X.shape[0]
+    eps = 1e-4
+    d = w.shape[0]
+    grad = np.array([])
 
-    X_T = np.transpose(X)
-    y_chapeu = np.dot(X, w)
+    for i in range(0, d):
+        w_mais = np.array(w, copy=True)
+        w_menos = np.array(w, copy=True)
+        
+        w_mais[i] += eps
+        w_menos[i] -= eps
+        
+        J_mais = compute_cost(X, y, w_mais)
+        J_menos = compute_cost(X, y, w_menos)
 
-    grad = np.dot(X_T, (y_chapeu - y))
-    grad = np.dot(2/N, grad)
+        grad = np.append(grad, (J_mais - J_menos)/(2*eps))
+        
+    grad = np.reshape(grad, (d, 1))
 
     return grad
 
