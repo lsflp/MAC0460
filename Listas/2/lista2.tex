@@ -1,0 +1,128 @@
+\documentclass[12pt,letterpaper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath,amsthm,amsfonts,amssymb,amscd}
+\usepackage[table]{xcolor}
+\usepackage[margin=2cm]{geometry}
+\usepackage{graphicx}
+\usepackage{multicol}
+\usepackage{mathtools}
+\usepackage[brazil]{babel}
+\usepackage[default]{lato}
+\usepackage[T1]{fontenc}
+\newlength{\tabcont}
+\setlength{\parindent}{0.0in}
+\setlength{\parskip}{0.05in}
+
+\DeclareMathOperator{\expv}{\mathbb{E}}
+\DeclareMathOperator{\data}{\mathcal{D}}
+
+\begin{document}
+	
+	\textbf{Nome}: Luís Felipe de Melo Costa Silva \\
+	\textbf{Número USP}: 9297961 
+	
+	\begin{center}
+		\LARGE \bf
+		Lista de Exercícios 2 - MAC0460
+	\end{center}
+	
+	\section*{Exercício 4}
+	
+	Queremos que $\epsilon(M, N, \delta) = \sqrt{\frac{1}{2N} \text{ln} \frac{2M}{\delta}} \leq 0.05$. Teremos:
+	
+	\begin{multicols}{2}
+		\begin{equation*}
+			\begin{split}
+				\sqrt{\frac{1}{2N} \text{ln} \frac{2M}{\delta}} \leq 0.05 \\
+				\frac{1}{2N} \text{ln} \frac{2M}{\delta} \leq 0.05^2 \\
+				\frac{1}{2N} \leq \frac{0.05^2}{\text{ln} \frac{2M}{\delta}} \\
+				2N \leq \frac{\text{ln} \frac{2M}{\delta}}{0.05^2} \\
+				N \leq \frac{\text{ln} \frac{2M}{\delta}}{2 \cdot 0.05^2} \\
+			\end{split}
+		\end{equation*}
+		
+		Como $\delta = 0.03$: \\
+		
+		\textbf{a)} Para $M = 1$, $N \leq \frac{\text{ln} \frac{2}{0.03}}{2 \cdot 0.05^2} \cong 840$
+		
+		\textbf{b)} Para $M = 100$, $N \leq \frac{\text{ln} \frac{200}{0.03}}{2 \cdot 0.05^2} \cong 1761$
+		
+		\textbf{c)} Para $M = 10000$, $N \leq \frac{\text{ln} \frac{20000}{0.03}}{2 \cdot 0.05^2} \cong 2683$
+		
+	\end{multicols}
+	
+	\section*{Exercício 7}
+	
+	Temos que $ y(x) = f(x) + \epsilon$, onde $ \epsilon $ é uma v.a. com $ \expv(\epsilon) = 0 $ e  var$(\epsilon) = \expv[\epsilon^2] = \sigma^2 $. Para auxiliar nos cálculos, vamos definir uma hipótese média $\bar{g}(x) = \expv_{\data}[g^{\data}(x)]$.
+	
+	\begin{equation*}
+		\begin{split}
+			\expv_{\data}[E_{out} (g^{(\data)})] & = \expv_{\data}[ \expv_{X,Y}[ (g^{(\data)}(x) - y(x))^2]] \\
+			& = \expv_{X,Y}[ \expv_{\data}[ (g^{(\data)}(x) - y(x))^2]] \\
+			& = \expv_{X,Y}[ \expv_{\data}[ (g^{(\data)}(x) -\bar{g}(x) + \bar{g}(x) - y(x))^2]] \\
+			& = \expv_{X,Y}[ \expv_{\data}[ (g^{(\data)}(x) -\bar{g}(x))^2 + (\bar{g}(x) - y(x))^2 + 2 \cdot \overbrace{(g^{(\data)}(x) -\bar{g}(x))}^{0} \cdot (\bar{g}(x) - y(x))]] \\
+			& = \expv_{X,Y}[ \expv_{\data}[ (g^{(\data)}(x) -\bar{g}(x))^2 + (\bar{g}(x) - y(x))^2]] \\
+			& = \expv_{X,Y}[ \expv_{\data}[ (g^{(\data)}(x) -\bar{g}(x))^2] + \expv_{\data}[(\bar{g}(x) - y(x))^2]] \\
+			& = \expv_{X,Y}[\expv_{\data}[ \text{var}(x) + (\bar{g}(x) - y(x))^2]] \\
+			& = \text{var} + \expv_{X,Y}[(\bar{g}(x) - y(x))^2] \\
+			& = \text{var} + \expv_{X,Y}[(\bar{g}(x) - f(x) - \epsilon)^2] \\
+			& = \text{var} + \expv_{X,Y}[(\bar{g}(x))^2 + (f(x))^2 + \epsilon^2 - 2 \cdot \bar{g}(x) \cdot f(x) - 2 \cdot \bar{g}(x) \cdot \epsilon + 2 \cdot f(x) \cdot \epsilon] \\
+			& = \text{var} + \expv_{X,Y}[(\bar{g}(x) - f(x))^2 + \epsilon^2 - 2 \cdot \bar{g}(x) \cdot \epsilon + 2 \cdot f(x) \cdot \epsilon] \\
+			& = \text{var} + \expv_{X,Y}[\text{bias}(x)] + \expv_{X, Y} [\epsilon^2] - 2 \cdot \expv_{X, Y}[\bar{g}(x) \cdot \epsilon] + 2 \cdot \expv_{X,Y}[f(x) \cdot \epsilon] \\
+			& \stackrel{ind.}{=} \text{var} + \text{bias } + \expv [\epsilon^2] - 2 \cdot \expv_X[\bar{g}(x)] \cdot \overbrace{\expv[\epsilon]}^{0} + 2 \cdot \expv_{X}[f(x)] \cdot \overbrace{\expv[\epsilon]}^{0} = \sigma^2 + \text{bias} + \text{var}
+		\end{split}
+	\end{equation*}
+	
+	\qed
+	
+	\section*{Exercício 8}
+	
+	\textbf{a)} Do enunciado, temos que o conjunto $\mathcal{H}$ possui funções no estilo $ ax+b $. Logo, usando a definição de $\bar{g}(x)$, e definindo como $K$ o número total de \textit{data sets}:
+	
+	\begin{equation*}
+		\begin{split}
+			\bar{g}(x) & = \expv_{\data}[g^{(\data)}(x)] = \expv_{\data}[a^{(\data)}\cdot x + b^{(\data)}] = \expv_{\data}[a^{(\data)}\cdot x] + \expv_{\data}[b^{(\data)}] \\
+			& = \frac{1}{K} \sum_{k=1}^{K} a_k \cdot x + \frac{1}{K} \sum_{k=1}^{K} b_k = \frac{1}{K} \sum_{k=1}^{K} a_k \cdot x + b_k
+		\end{split}
+	\end{equation*}
+	
+	\textbf{b)} Fixando um número $ K $ de iterações, poderíamos fazer, a cada iteração:
+	
+	\begin{itemize}
+		\item Gerar dois valores, $ x_1 $ e $ x_2 $, cada um retirado de uma distribuição Uniforme$ (-1, 1) $. Com isso, geramos dois pontos, usando a $ f(x) $, e temos nosso \textit{data set}.
+		\item Rodar o algoritmo de aprendizado, que resultará em uma $ g(x) $.
+	\end{itemize}
+	
+	Teremos $ K $ \textit{data sets} e $ K $ funções $ g(x) $. Com isso, podemos calcular:
+	
+	\begin{itemize}
+		\item $ \bar{g}(x) $, com a média das $ g(x) $.
+		\item O \textit{bias}, com o valor $ \expv_X[(\bar{g}(x) - f(x))^2] $.
+		\item A \text{var}, fazendo $ \expv_X[\expv_{(\data)}(g^{\data}(x) - \bar{g}(x))^2]] $
+		\item Por último, $ E_{out} $, com a fórmula $\expv_{\data}[E_{out} (g^{(\data)})] = \expv_{\data}[ \expv_X[ (g^{(\data)}(x) - f(x))^2]]$
+	\end{itemize}
+	
+	\section*{Exercício 10}
+	
+	\textbf{a)} Vamos chamar de $ h(x) $ a saída do nosso algoritmo e $ C $ a variável que representa o custo. Teremos:
+	
+	\begin{itemize}
+		\item cost(accept) = $\expv(C | h(x) = 1) = g(x) \cdot 0 + (1-g(x)) \cdot c_a = (1-g(x)) \cdot c_a$
+		\item cost(reject) = $\expv(C | h(x) = -1) = g(x) \cdot c_r + (1-g(x)) \cdot 0 = g(x) \cdot c_r$
+	\end{itemize}
+	
+	\textbf{b)} A regressão logística gera uma saída num intervalo contínuo $ [0,1] $. Quando usamos esse resultado para uma classificação binária, precisamos de um limiar $ \kappa $. O custo de aceite é igual ao custo de rejeite nesse ponto, já que o intervalo é contínuo. Então, fazendo $ g(x) = \kappa $, teremos:
+	
+	\begin{center}
+		cost(reject) = cost(accept) \\
+		$ (1-g(x)) \cdot c_a = g(x) \cdot c_r $ \\
+		$ (1-\kappa) \cdot c_a = \kappa \cdot c_r $ \\
+		$ c_a - \kappa \cdot c_a = \kappa \cdot c_r $ \\
+		$ \kappa = \frac{c_a}{c_a + c_r} $
+	\end{center}
+	
+	\qed
+	
+	\textbf{c)} Para o exemplo do supermercado, temos que $ c_a = 1 $ e $ c_r = 10 $. Portanto, teremos $ \kappa = \frac{1}{11} $, que indica um bom intervalo de aceite, já que é o falso negativo que incomoda. Já para a CIA, com $ c_a = 1000 $ e $ c_r = 1 $, $ \kappa = \frac{1000}{1001} $, e nos dá um intervalo bem restritivo para o aceite, de modo a evitar ao máximo falsos positivos.
+	
+\end{document}
