@@ -9,6 +9,8 @@
 \usepackage[brazil]{babel}
 \usepackage[default]{lato}
 \usepackage[T1]{fontenc}
+\usepackage{caption}
+\usepackage{subcaption}
 \newlength{\tabcont}
 \setlength{\parindent}{0.0in}
 \setlength{\parskip}{0.05in}
@@ -45,11 +47,11 @@
 
 	\qed
 	
-	\textbf{c)} Quando temos uma classificação incorreta, temos que $y(t)\mathbf{w}^\mathbf{T}(t)\mathbf{x}(t) < 0$. A próxima atualização nos trará um valor $y(t)\mathbf{w}^\mathbf{T}(t+1)\mathbf{x}(t)$, que é maior do que o anterior, como provado no item acima, o que nos deixa mais perto de um valor positivo, que é quando $\mathbf{x}(t)$ estará classificado corretamente.
+	\textbf{c)} Quando temos uma classificação incorreta, temos que $y(t)\mathbf{w}^\mathbf{T}(t)\mathbf{x}(t) < 0$. A próxima atualização nos trará um valor $y(t)\mathbf{w}^\mathbf{T}(t+1)\mathbf{x}(t)$, que é maior do que o anterior, como provado no item acima. Isso nos deixa mais perto de um valor positivo, que é quando $\mathbf{x}(t)$ estará classificado corretamente.
  	
 	\section*{Exercício 2}
 	
-	\textbf{a)} A hipótese $ h(\mathbf{x}) $ erra nos índices ímpares de $\mathbf{x}$, ou seja, em aproximadamente $ \frac{M}{2} $. Logo, $ E_{\text{off}}(h,f) \cong \frac{1}{M}\cdot\frac{M}{2} \cong \frac{1}{2}$. \\
+	\textbf{a)} A hipótese $ h(\mathbf{x}) $ erra nos índices ímpares de $\mathbf{x}$, ou seja, em aproximadamente $ \frac{M}{2} $ índices. Logo, $ E_{\text{off}}(h,f) \cong \frac{1}{M}\cdot\frac{M}{2} \cong \frac{1}{2}$. \\
 	
 	\textbf{b)} Para cada $ \mathbf{x}_k, k \in \{1,..., N+M\}$, $ y $ pode assumir dois valores, $ -1 $ e $ +1 $, portanto, teremos $ 2^{N+M} $ funções distintas. Fixando um $N$, para garantir um conjunto $ \mathcal{D} $ sem ruídos, teremos $ 2^M $ funções distintas. \\
 	
@@ -95,23 +97,28 @@
 	
 	Queremos que $\epsilon(M, N, \delta) = \sqrt{\frac{1}{2N} \text{ln} \frac{2M}{\delta}} \leq 0.05$. Teremos:
 	
-	\begin{equation*}
-		\begin{split}
-			\sqrt{\frac{1}{2N} \text{ln} \frac{2M}{\delta}} \leq 0.05 \\
-			\frac{1}{2N} \text{ln} \frac{2M}{\delta} \leq 0.05^2 \\
-			\frac{1}{2N} \leq \frac{0.05^2}{\text{ln} \frac{2M}{\delta}} \\
-			2N \leq \frac{\text{ln} \frac{2M}{\delta}}{0.05^2} \\
-			N \leq \frac{\text{ln} \frac{2M}{\delta}}{2 \cdot 0.05^2} \\
-		\end{split}
-	\end{equation*}
+	\clearpage
 	
-	Como $\delta = 0.03$: \\
+	\begin{multicols}{2}
+		\begin{equation*}
+			\begin{split}
+				\sqrt{\frac{1}{2N} \text{ln} \frac{2M}{\delta}} \leq 0.05 \\
+				\frac{1}{2N} \text{ln} \frac{2M}{\delta} \leq 0.05^2 \\
+				\frac{1}{2N} \leq \frac{0.05^2}{\text{ln} \frac{2M}{\delta}} \\
+				2N \geq \frac{\text{ln} \frac{2M}{\delta}}{0.05^2} \\
+				N \geq \frac{\text{ln} \frac{2M}{\delta}}{2 \cdot 0.05^2} \\
+			\end{split}
+		\end{equation*}
+		
+		Como $\delta = 0.03$: \\
+		
+		\textbf{a)} Para $M = 1$, $N \geq \frac{\text{ln} \frac{2}{0.03}}{2 \cdot 0.05^2} \cong 840$
+		
+		\textbf{b)} Para $M = 100$, $N \geq \frac{\text{ln} \frac{200}{0.03}}{2 \cdot 0.05^2} \cong 1761$
+		
+		\textbf{c)} Para $M = 10000$, $N \geq \frac{\text{ln} \frac{20000}{0.03}}{2 \cdot 0.05^2} \cong 2683$
+	\end{multicols}
 	
-	\textbf{a)} Para $M = 1$, $N \leq \frac{\text{ln} \frac{2}{0.03}}{2 \cdot 0.05^2} \cong 840$
-	
-	\textbf{b)} Para $M = 100$, $N \leq \frac{\text{ln} \frac{200}{0.03}}{2 \cdot 0.05^2} \cong 1761$
-	
-	\textbf{c)} Para $M = 10000$, $N \leq \frac{\text{ln} \frac{20000}{0.03}}{2 \cdot 0.05^2} \cong 2683$
 	
 	\section*{Exercício 5}
 	
@@ -120,18 +127,20 @@
 	Portanto, teremos os seguintes gráficos:
 	
 	\begin{figure}[h]
-		\includegraphics[width=\linewidth/2]{exercicio5a}
 		\centering
-		\caption{$d_{vc} = 2$}
+		\begin{subfigure}{.5\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{exercicio5a}
+			\caption{$ d_{vc} = 2 $}
+		\end{subfigure}%
+		\begin{subfigure}{.5\linewidth}
+			\centering
+			\includegraphics[width=\linewidth]{exercicio5b}
+			\caption{$ d_{vc} = 5 $}
+		\end{subfigure}
 	\end{figure}
 	
-	\begin{figure}[h]
-		\includegraphics[width=\linewidth/2]{exercicio5b}
-		\centering
-		\caption{$d_{vc} = 5$}
-	\end{figure}
-	
-	Como queremos o limiar mais restritivo, quando $d_{vc} = 2$, o limite do Problema 2.5 é mais interessante. Analogamente, para $d_{vc} = 5$, o melhor aqui é o do Problema 2.6.
+	Como queremos o limiar mais restritivo, quando $d_{vc} = 2$, o limite do Problema 2.5 é mais interessante. Analogamente, para $d_{vc} = 5$, o melhor é o do Problema 2.6.
 	
 	\section*{Exercício 6}
 	
@@ -149,11 +158,11 @@
 			& \geq 14000 + 3200 \cdot\text{ln}((2N)^{10}) \\
 			& \geq 14000 + 32000\cdot\text{ln}(2N) \\
 			& \geq 14000 + 32000\cdot(\text{ln}(2) + \text{ln}(N)) \\
-			& \geq 36000 + \text{ln}(N) \\ 
+			& \geq 36000 + 32000 \cdot \text{ln}(N) \\ 
 		\end{split}
 	\end{equation*}
 	
-	Fazendo algumas estimativas, chegamos ao valor $ N \geq 36011 $.
+	Fazendo algumas estimativas, chegamos ao valor $ N \geq 453000 $.
 	
 	\section*{Exercício 7}
 	
