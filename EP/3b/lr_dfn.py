@@ -16,20 +16,18 @@ class LogisticRegression(nn.Module):
     """
     def __init__(self, config):
         super(LogisticRegression, self).__init__()
-        self.linear = lambda x : nn.Linear(x.shape[1], 3)(x)
-        self.softmax = nn.Softmax(0)
+        self.model = nn.Linear(config.height*config.width*config.channels, config.classes)
         self.logits = None
 
     def forward(self, x):
         """
         Computes forward pass
-
         :param x: input tensor
         :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
         :return: logits
         :rtype: torch.FloatTensor(shape=[batch_size, number_of_classes])
         """
-        self.logits = self.linear(x)
+        self.logits = self.model(x)
         logits = self.logits
         
         return logits
@@ -38,7 +36,6 @@ class LogisticRegression(nn.Module):
     def predict(self, x):
         """
         Computes model's prediction
-
         :param x: input tensor
         :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
         :return: model's predictions
@@ -47,7 +44,7 @@ class LogisticRegression(nn.Module):
         if (self.logits is None):
             self.logits = self.forward(x)
             
-        softmax = self.softmax(self.logits)
+        softmax = nn.Softmax(1)(self.logits)
         predictions = torch.argmax(softmax, 1)
         
         return predictions   
@@ -122,30 +119,23 @@ def train_model_img_classification(model,
     valid_loader = dataholder.valid_loader
 
     best_valid_loss = float("inf")
-    # YOUR CODE HERE:
-    # i) define the loss criteria and the optimizer. 
-    # You may find nn.CrossEntropyLoss and torch.optim.SGD useful here.
-    raise NotImplementedError("falta completar a função train_model_img_classification")
-    # criterion =  
-    # optimizer =
-    # END YOUR CODE
-
+    criterion = nn.CrossEntropyLoss()
+    optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=config.momentum)
+    
     train_loss = []
     valid_loss = []
     for epoch in range(config.epochs):
         for step, (images, labels) in enumerate(train_loader):
-            # YOUR CODE HERE:
-            # ii) You should zero the model gradients
-            # and define the loss function for the train data.
-            raise NotImplementedError("falta completar a função train_model_img_classification")
-            # loss = 
-            # END YOUR CODE
+            
+            optimizer.zero_grad()
+            logits = model.forward(images)
+            loss = criterion(logits, labels)
+            
             if step % config.save_step == 0:
-                # YOUR CODE HERE:
-                # iii) You should define the loss function for the valid data.
-                raise NotImplementedError("falta completar a função train_model_img_classification")
-                # v_loss = 
-                # END YOUR CODE
+                v_images, v_labels = next(iter(valid_loader))
+                predictions = model.forward(v_images)
+                v_loss = criterion(predictions, v_labels)
+                
                 valid_loss.append(float(v_loss))
                 train_loss.append(float(loss))
                 if float(v_loss) < best_valid_loss:
@@ -154,11 +144,10 @@ def train_model_img_classification(model,
                     best_valid_loss = float(v_loss)
                     if verbose:
                         print(msg, end="")
-            # YOUR CODE HERE:
-            # iv) You should do the back propagation
-            # and do the optimization step.
-            raise NotImplementedError("falta completar a função train_model_img_classification")            
-            # END YOUR CODE
+            
+            loss.backward()
+            optimizer.step()
+
     if verbose:
         x = np.arange(1, len(train_loss) + 1, 1)
         fig, ax = plt.subplots(1, 1, figsize=(12, 5))
