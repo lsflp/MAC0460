@@ -8,64 +8,15 @@ import matplotlib.pyplot as plt
 class LogisticRegression(nn.Module):
     """
     Logistic regression model.
-    
+
     You may find nn.Linear and nn.Softmax useful here.
-    
+
     :param config: hyper params configuration
     :type config: LRConfig
     """
     def __init__(self, config):
         super(LogisticRegression, self).__init__()
         self.model = nn.Linear(config.height*config.width*config.channels, config.classes)
-        self.logits = None
-
-    def forward(self, x):
-        """
-        Computes forward pass
-        :param x: input tensor
-        :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
-        :return: logits
-        :rtype: torch.FloatTensor(shape=[batch_size, number_of_classes])
-        """
-        self.logits = self.model(x)
-        logits = self.logits
-        
-        return logits
-    
-    
-    def predict(self, x):
-        """
-        Computes model's prediction
-        :param x: input tensor
-        :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
-        :return: model's predictions
-        :rtype: torch.LongTensor(shape=[batch_size])
-        """
-        if (self.logits is None):
-            self.logits = self.forward(x)
-            
-        softmax = nn.Softmax(1)(self.logits)
-        predictions = torch.argmax(softmax, 1)
-        
-        return predictions   
-
-
-class DFN(nn.Module):
-    """
-    Deep Feedforward Network.
-
-    The method self._modules is useful here.
-    The class nn.ReLU() is useful too.
-
-    :param config: hyper params configuration
-    :type config: DFNConfig
-    """
-    def __init__(self, config):
-        super(DFN, self).__init__()
-        # YOUR CODE HERE:
-        raise NotImplementedError("falta completar o método __init__ da classe DFN")
-        # END YOUR CODE
-
 
     def forward(self, x):
         """
@@ -76,9 +27,8 @@ class DFN(nn.Module):
         :return: logits
         :rtype: torch.FloatTensor(shape=[batch_size, number_of_classes])
         """
-        # YOUR CODE HERE:
-        raise NotImplementedError("falta completar o método forward da classe DFN")
-        # END YOUR CODE
+        logits = self.model(x)
+        
         return logits
 
     def predict(self, x):
@@ -90,9 +40,59 @@ class DFN(nn.Module):
         :return: model's predictions
         :rtype: torch.LongTensor(shape=[batch_size, number_of_classes])
         """
-        # YOUR CODE HERE:
-        raise NotImplementedError("falta completar o método predict da classe DFN")     
-        # END YOUR CODE
+        softmax = nn.Softmax(1)(self.forward(x))
+        predictions = torch.argmax(softmax, 1)
+
+        return predictions
+
+class DFN(nn.Module):
+    """
+    Deep Feedforward Network.
+    
+    The method self._modules is useful here.
+    The class nn.ReLU() is useful too.
+    
+    :param config: hyper params configuration
+    :type config: DFNConfig
+    """
+    def __init__(self, config):
+        super(DFN, self).__init__()
+        layers = list()
+        network = config.architecture
+        
+        layers.append(nn.Linear(config.height*config.width*config.channels, network[0]))
+        
+        for i in range(1, len(network)):
+            layers.append(nn.ReLU())
+            layers.append(nn.Linear(network[i-1], network[i]))
+            
+        self.model = nn.Sequential(*layers)
+
+    def forward(self, x):
+        """
+        Computes forward pass
+
+        :param x: input tensor
+        :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
+        :return: logits
+        :rtype: torch.FloatTensor(shape=[batch_size, number_of_classes])
+        """
+        logits = self.model(x)
+        
+        return logits
+
+    def predict(self, x):
+        """
+        Computes model's prediction
+
+        :param x: input tensor
+        :type x: torch.FloatTensor(shape=(batch_size, number_of_features))
+        :return: model's predictions
+        :rtype: torch.LongTensor(shape=[batch_size, number_of_classes])
+        """
+        softmax = nn.Softmax(1)(self.forward(x))
+        predictions = torch.argmax(softmax, 1)
+         
         return predictions
 
 
@@ -103,7 +103,6 @@ def train_model_img_classification(model,
                                    verbose=True):
     """
     Train a model for image classification
-
     :param model: image classification model
     :type model: LogisticRegression or DFN
     :param config: image classification model
@@ -119,6 +118,7 @@ def train_model_img_classification(model,
     valid_loader = dataholder.valid_loader
 
     best_valid_loss = float("inf")
+    
     criterion = nn.CrossEntropyLoss()
     optimizer = torch.optim.SGD(model.parameters(), lr=config.learning_rate, momentum=config.momentum)
     
@@ -127,14 +127,15 @@ def train_model_img_classification(model,
     for epoch in range(config.epochs):
         for step, (images, labels) in enumerate(train_loader):
             
-            optimizer.zero_grad()
-            logits = model.forward(images)
-            loss = criterion(logits, labels)
+            model.zero_grad()
+            logits = model(images/255)
+            loss = criterion(logits.type("torch.FloatTensor"), labels)
             
             if step % config.save_step == 0:
+                
                 v_images, v_labels = next(iter(valid_loader))
-                predictions = model.forward(v_images)
-                v_loss = criterion(predictions, v_labels)
+                predictions = model(v_images/255)
+                v_loss = criterion(predictions.type("torch.FloatTensor"), v_labels)
                 
                 valid_loss.append(float(v_loss))
                 train_loss.append(float(loss))
