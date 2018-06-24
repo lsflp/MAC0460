@@ -10,3 +10,4 @@
 
 **/*.blg
 
+**/self_driving_pi_car_data/*
