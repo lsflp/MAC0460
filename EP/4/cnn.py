@@ -20,23 +20,25 @@ class CNN(nn.Module):
         super(CNN, self).__init__()
         
         layers = list()        
-        channels = [config.channels] + config.conv_architecture
-        dim = [config.batch_size, config.channels, config.height, config.width]
+        filters = [config.channels] + config.conv_architecture
+        channel = config.channels
+        height = config.height
+        width = config.width
         
         for i in range(len(config.conv_architecture)):
-            layers.append(nn.Conv2d(channels[i], channels[i+1], config.kernel_sizes[i]))
-            dim[1] = config.conv_architecture[i] # Trocando o número de canais
-            dim[2] -= config.kernel_sizes[i]     # Ajustando a altura
-            dim[3] -= config.kernel_sizes[i]     # Ajustando a largura
+            layers.append(nn.Conv2d(filters[i], filters[i+1], config.kernel_sizes[i]))
+            channel = config.conv_architecture[i] # Trocando o número de canais
+            height -= config.kernel_sizes[i]      # Ajustando a altura
+            width -= config.kernel_sizes[i]       # Ajustando a largura
             layers.append(nn.ReLU())
             layers.append(nn.MaxPool2d(config.pool_kernel[i]))
-            dim[2] = dim[2]//config.pool_kernel[i] + (dim[2] % config.pool_kernel[i] > 0) # Redimensionando a altura
-            dim[3] = dim[3]//config.pool_kernel[i] + (dim[3] % config.pool_kernel[i] > 0) # Redimensionando a largura
+            height = height//config.pool_kernel[i] + (height % config.pool_kernel[i] > 0) # Redimensionando a altura
+            width = width//config.pool_kernel[i] + (width % config.pool_kernel[i] > 0)    # Redimensionando a largura
             
         self.conv = nn.Sequential(*layers)
         
         network = list()
-        network.append(nn.Linear(dim[1]*dim[2]*dim[3], config.architecture[0]))
+        network.append(nn.Linear(channel*height*width, config.architecture[0]))
         
         for i in range(1, len(config.architecture)):
             network.append(nn.ReLU())
